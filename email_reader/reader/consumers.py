@@ -37,9 +37,7 @@ class EmailConsumer(AsyncWebsocketConsumer):
         Управляет обработкой писем.
         """
 
-        await self.send(text_data=json.dumps({
-            'result': cf.AUTH,
-        }))
+        await self.send(json.dumps({'result': cf.AUTH}))
         await asyncio.sleep(0.01)
         email_pass = (
             await sync_to_async(EmailAccount.objects.get)(email=email_acc)
@@ -52,10 +50,8 @@ class EmailConsumer(AsyncWebsocketConsumer):
             imap.login(email_acc, email_pass)
         except Exception:
             return {'display_message': cf.AUTH_ERROR}
-        await self.send(text_data=json.dumps({
-            'result': cf.SEARCH_START,
-        }))
-        await asyncio.sleep(0.5)
+        await self.send(json.dumps({'result': cf.SEARCH_START}))
+        await asyncio.sleep(0.3)
         msgnums_list, flag = get_msgnums_list(imap)
         if not flag:
             imap.logout()
@@ -78,9 +74,7 @@ class EmailConsumer(AsyncWebsocketConsumer):
         saved_messages_count = 0
         all_messages_num = len(msgnums_list)
         if all_messages_num:
-            await self.send(
-                text_data=json.dumps({'result': cf.LOADING})
-            )
+            await self.send(json.dumps({'result': cf.LOADING}))
             await asyncio.sleep(0.01)
         for msgnum in msgnums_list:
             message_data = get_message_data(msgnum, imap, email_acc)
@@ -88,19 +82,15 @@ class EmailConsumer(AsyncWebsocketConsumer):
             if res:
                 table_row = get_row(message_data)
                 saved_messages_count += 1
-                await self.send(text_data=json.dumps({
-                    'table_row': table_row,
-                }))
+                await self.send(json.dumps({'table_row': table_row}))
                 await asyncio.sleep(0.01)
             progress = saved_messages_count
-            await self.send(
-                text_data=json.dumps(
+            await self.send(json.dumps(
                     {
                         'progress': progress,
                         'total': all_messages_num
                     }
-                )
-            )
+                ))
             await asyncio.sleep(0.01)
         return f'Сохранено {saved_messages_count} писем.'
 
@@ -111,7 +101,5 @@ class EmailConsumer(AsyncWebsocketConsumer):
                 return msgnums_list
             elif i % cf.MESSAGE_FREQ == 0:
                 message = f'проверено писем: {i}'
-                await self.send(text_data=json.dumps({
-                    'result': message,
-                }))
+                await self.send(json.dumps({'result': message}))
                 await asyncio.sleep(0.01)
