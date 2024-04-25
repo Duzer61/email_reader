@@ -25,14 +25,14 @@ class EmailConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         email_acc = text_data_json['email_acc']
         if email_acc:
-            result = await self.get_context(email_acc)
+            result = await self.get_emails(email_acc)
             if result.get('display_message'):
                 await self.send(json.dumps({
                     'result': result['display_message'],
                     'flag': True,
                 }))
 
-    async def get_context(self, email_acc):
+    async def get_emails(self, email_acc):
         """
         Управляет обработкой писем.
         """
