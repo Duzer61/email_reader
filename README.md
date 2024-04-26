@@ -33,6 +33,7 @@ ____________
  - PostgreSQL
  - Redis
  - Django-cryptography 1.1
+ - JavaScript
 _______
   ##  Автор
 Данил Кочетов - [GitHub](https://github.com/Duzer61)
