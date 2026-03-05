@@ -6,7 +6,7 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env('../.env')
 
 SECRET_KEY = env('DJANGO_KEY', default='django-insecure')
 FIELD_ENCRYPTION_KEY = env(
